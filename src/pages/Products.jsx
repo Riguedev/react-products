@@ -17,7 +17,7 @@ function Products() {
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
-  const [editingId, setEditingId] = useState(null)
+  const [editingId, setEditingId] = useState(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -34,7 +34,7 @@ function Products() {
     loadCategories();
   }, []);
 
-   async function loadProducts(pageNumber = 1) {
+  async function loadProducts(pageNumber = 1) {
     try {
       setLoading(true);
 
@@ -44,16 +44,14 @@ function Products() {
 
       setProducts(data.products);
       setTotal(data.total);
-
     } catch (error) {
       setError(error.message);
-
     } finally {
       setLoading(false);
     }
   }
 
-    function nextPage() {
+  function nextPage() {
     const totalPages = Math.ceil(total / limit);
 
     if (page < totalPages) {
@@ -73,10 +71,9 @@ function Products() {
     }
   }
 
-    async function loadCategories() {
+  async function loadCategories() {
     try {
       const data = await getCategories();
-
       setCategories(data);
     } catch (error) {
       console.error(error);
@@ -86,15 +83,13 @@ function Products() {
   async function handleDelete(id) {
     try {
       await deleteProduct(id);
-      setProducts(
-        products.filter((product) => product.id !== id)
-      );
+      setProducts(products.filter((product) => product.id !== id));
     } catch (error) {
       setError(error.message);
     }
   }
 
-    async function handleSearch(event) {
+  async function handleSearch(event) {
     event.preventDefault();
 
     try {
@@ -107,7 +102,6 @@ function Products() {
 
       const data = await searchProducts(search);
       setProducts(data.products);
-
     } catch (error) {
       setError(error.message);
     } finally {
@@ -115,9 +109,8 @@ function Products() {
     }
   }
 
-    async function handleCategory(event) {
+  async function handleCategory(event) {
     const selectedCategory = event.target.value;
-
     setCategory(selectedCategory);
 
     try {
@@ -128,14 +121,10 @@ function Products() {
         return;
       }
 
-      const data = 
-        await getProductsByCategory(selectedCategory);
-
+      const data = await getProductsByCategory(selectedCategory);
       setProducts(data.products);
-
     } catch (error) {
       setError(error.message);
-
     } finally {
       setLoading(false);
     }
@@ -145,11 +134,12 @@ function Products() {
     const { name, value } = event.target;
 
     setForm({
-       ...form,
-      [name]: value });
+      ...form,
+      [name]: value,
+    });
   }
 
-    async function handleCreate(event) {
+  async function handleCreate(event) {
     event.preventDefault();
 
     try {
@@ -158,23 +148,19 @@ function Products() {
         price: Number(form.price),
       });
 
-      setProducts([
-        newProduct,
-        ...products,
-      ]);
+      setProducts([newProduct, ...products]);
 
       setForm({
         title: "",
         price: "",
         description: "",
       });
-
     } catch (error) {
       setError(error.message);
     }
   }
-  
-   function handleEdit(product) {
+
+  function handleEdit(product) {
     setEditingId(product.id);
 
     setForm({
@@ -184,23 +170,18 @@ function Products() {
     });
   }
 
-    async function handleUpdate(event) {
+  async function handleUpdate(event) {
     event.preventDefault();
 
     try {
-      const updated = await updateProduct(
-        editingId,
-        {
-          ...form,
-          price: Number(form.price),
-        }
-      );
+      const updated = await updateProduct(editingId, {
+        ...form,
+        price: Number(form.price),
+      });
 
       setProducts(
         products.map((product) =>
-          product.id === editingId
-            ? { ...product, ...updated }
-            : product
+          product.id === editingId ? { ...product, ...updated } : product
         )
       );
 
@@ -211,7 +192,6 @@ function Products() {
         price: "",
         description: "",
       });
-
     } catch (error) {
       setError(error.message);
     }
@@ -221,95 +201,81 @@ function Products() {
     <section>
       <h1>Productos</h1>
 
-      <form onSubmit={editingId ? handleUpdate : handleCreate} className="product-form">
+      {/* 1. FORMULARIO DE BÚSQUEDA */}
+      <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
           placeholder="Buscar producto..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-
-        <button type="submit">
-          Buscar
-        </button>
+        <button type="submit">Buscar</button>
       </form>
 
-      <select
-        value={category}
-        onChange={handleCategory}
-      >
-        
-        <option value="">
-          Todas las categorias
-        </option>
-
+      {/* 2. SELECTOR DE CATEGORÍAS */}
+      <select value={category} onChange={handleCategory}>
+        <option value="">Todas las categorias</option>
         {categories.map((item) => {
           const value = item.slug ?? item;
           const label = item.name ?? item;
 
           return (
-            <option
-              key={value}
-              value={value}
-            >
+            <option key={value} value={value}>
               {label}
             </option>
           );
         })}
       </select>
 
-          <form onSubmit={handleCreate} className="product-form">
+      {/* 3. FORMULARIO DE CREAR / EDITAR (Corregido) */}
+      <form
+        onSubmit={editingId ? handleUpdate : handleCreate}
+        className="product-form"
+      >
+        <input
+          type="text"
+          name="title"
+          placeholder="Nombre"
+          value={form.title}
+          onChange={handleChange}
+          required
+        />
 
-      <input
-        type="text"
-        name="title"
-        placeholder="Nombre"
-        value={form.title}
-        onChange={handleChange}
-        required
-      />
+        <input
+          type="number"
+          name="price"
+          placeholder="Precio"
+          value={form.price}
+          onChange={handleChange}
+          required
+        />
 
-      <input
-        type="number"
-        name="price"
-        placeholder="Precio"
-        value={form.price}
-        onChange={handleChange}
-        required
-      />
-
-      <textarea
-        name="description"
-        placeholder="Descripción"
-        value={form.description}
-        onChange={handleChange}
-      />
+        <textarea
+          name="description"
+          placeholder="Descripción"
+          value={form.description}
+          onChange={handleChange}
+        />
 
         <button type="submit">
-          {editingId
-            ? "Actualizar"
-            : "Guardar"}
+          {editingId ? "Actualizar" : "Guardar"}
         </button>
+      </form>
 
-    </form>
-
+      {/* 4. LISTA DE PRODUCTOS */}
       <ProductList
         products={products}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
 
-            <div className="pagination">
-        <button
-          onClick={previousPage}
-          disabled={page === 1}
-        >
+      {/* 5. PAGINACIÓN */}
+      <div className="pagination">
+        <button onClick={previousPage} disabled={page === 1}>
           Anterior
         </button>
 
-        <span>
-          Página {page}
-        </span>
+        <span>Página {page}</span>
 
         <button
           onClick={nextPage}
@@ -318,7 +284,6 @@ function Products() {
           Siguiente
         </button>
       </div>
-
     </section>
   );
 }
