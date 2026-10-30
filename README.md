@@ -191,8 +191,9 @@ Al finalizar el laboratorio, el estudiante deberá ser capaz de:
 
 ## Observaciones
 
-Espacio para registrar dificultades encontradas, soluciones implementadas, mejoras realizadas o aprendizajes obtenidos durante el desarrollo del laboratorio.
+El desarrollo de esta actividad me ha permitido ver la versatilidad de usar un framework/biblioteca de frontend para desarrollar aplicaciones del lado del cliente. Si bien requiere el acoplarse a la metodología de trabajo del framework, facilita el manejo general de las funciones del frontend, evitando que tengamos que programar desde cero todo.
 
+También siento curiosidad de reimplementar proyectos que ya he desarrollado en PHP, HTML, CSS y JavaScript para las solicitudes AJAX. Ahora separaré PHP para el backend y React para el frontend para mejorar la experiencia del usuario y el rendimiento de la aplicación
 ---
 
 ## Licencia
